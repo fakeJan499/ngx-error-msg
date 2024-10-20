@@ -2,6 +2,9 @@
     "name": "ngx-error-msg",
     "version": "0.0.0",
     "scripts": {
+        "ci:build": "ng build ngx-error-msg",
+        "ci:lint": "ng lint ngx-error-msg && prettier --check .",
+        "ci:test": "ng test --browsers ChromeHeadless --watch false",
         "prepare": "husky",
         "pre-commit": "lint-staged"
     },

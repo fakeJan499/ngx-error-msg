@@ -10,7 +10,10 @@
                 "plugin:@angular-eslint/recommended",
                 "plugin:@angular-eslint/template/process-inline-templates"
             ],
-            "rules": {}
+            "rules": {
+                "@angular-eslint/no-input-rename": "off",
+                "@angular-eslint/use-lifecycle-interface": "error"
+            }
         },
         {
             "files": ["*.html"],

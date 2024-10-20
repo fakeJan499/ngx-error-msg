@@ -45,5 +45,22 @@ describe(`NgxErrorMsgDirService`, () => {
                 done();
             });
         });
+
+        it(`should use config merged from injected one and the one provided by the directive`, done => {
+            const myErrorMessage = 'My error message';
+            const anotherErrorMessage = 'Another error message';
+            const expectedError = `${myErrorMessage} ${anotherErrorMessage}`;
+            service.setErrorMsgMappings({
+                myError: myErrorMessage,
+                anotherError: anotherErrorMessage,
+            });
+            service.setErrors({ myError: true, anotherError: true });
+            service.setConfig({ errorsLimit: 2 });
+
+            service.errorMessage$.subscribe(message => {
+                expect(message).toEqual(expectedError);
+                done();
+            });
+        });
     });
 });

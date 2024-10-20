@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidationErrors } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Observable, of } from 'rxjs';
+import { defaultConfig, NgxErrorMsgConfig } from './config';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
 import { NgxErrorMsgDirective } from './ngx-error-msg.directive';
 import { ErrorMessageMappings } from './ngx-error-msg.service';
@@ -10,7 +11,7 @@ import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
 @Component({
     template: `
-        <div *ngxErrorMsg="errors; mappings: errorMapping; let message">
+        <div *ngxErrorMsg="errors; mappings: errorMapping; config: config; let message">
             {{ message }}
         </div>
     `,
@@ -20,12 +21,14 @@ import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 class HostComponent {
     errors: ValidationErrors | null = null;
     errorMapping: ErrorMessageMappings = {};
+    config: Partial<NgxErrorMsgConfig> | null = null;
 }
 
 @Injectable()
 class MockNgxErrorMsgDirService extends NgxErrorMsgDirService {
     override setErrors = jasmine.createSpy('setErrors');
     override setErrorMsgMappings = jasmine.createSpy('setErrorMsgMappings');
+    override setConfig = jasmine.createSpy('setConfig');
     override errorMessage$: Observable<string | null> = of(null);
 }
 
@@ -74,6 +77,25 @@ describe(`NgxErrorMsgDirective`, () => {
         fixture.detectChanges();
 
         expect(directiveService.setErrorMsgMappings).toHaveBeenCalledWith(mapping);
+    });
+
+    it(`should set config when input is set`, () => {
+        const config: Partial<NgxErrorMsgConfig> = { errorsLimit: 997 };
+
+        fixture.componentInstance.config = config;
+        fixture.detectChanges();
+
+        expect(directiveService.setConfig).toHaveBeenCalledWith(config);
+    });
+
+    it(`should reset config when the value was changed to null`, () => {
+        fixture.componentInstance.config = defaultConfig;
+        fixture.detectChanges();
+
+        fixture.componentInstance.config = null;
+        fixture.detectChanges();
+
+        expect(directiveService.setConfig).toHaveBeenCalledWith({});
     });
 
     it(`should display message`, () => {

@@ -18,7 +18,7 @@ export abstract class NgxErrorMsgService {
         skipSelf: true,
         optional: true,
     });
-    private readonly config = inject(NGX_ERROR_MSG_CONFIG);
+    protected readonly config = inject(NGX_ERROR_MSG_CONFIG);
 
     /**
      * A record of error keys and their corresponding error message mappers.

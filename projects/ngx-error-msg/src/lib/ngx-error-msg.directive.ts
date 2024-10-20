@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { NgxErrorMsgConfig } from './config';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
 import { ErrorMessageMappings } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
@@ -46,6 +47,13 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
      */
     @Input('ngxErrorMsgMappings') set errorsMapping(value: ErrorMessageMappings) {
         this.mapper.setErrorMsgMappings(value);
+    }
+
+    /**
+     * Configuration for error message. This will override the provided configuration.
+     */
+    @Input('ngxErrorMsgConfig') set config(value: Partial<NgxErrorMsgConfig> | null) {
+        this.mapper.setConfig(value ?? {});
     }
 
     protected readonly errorMessage$ = this.mapper.errorMessage$;

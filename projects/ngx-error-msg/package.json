@@ -1,6 +1,26 @@
 {
     "name": "ngx-error-msg",
     "version": "0.0.1",
+    "author": {
+        "name": "Dawid Szemro",
+        "email": "dawid.sz@tutanota.com"
+    },
+    "description": "A library to map form errors to error messages and display them.",
+    "keywords": [
+        "ngx-error-msg",
+        "angular error messages",
+        "form errors",
+        "form error messages",
+        "form validation",
+        "validation messages",
+        "angular form error handling"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fakeJan499/ngx-error-msg.git"
+    },
+    "homepage": "https://github.com/fakeJan499/ngx-error-msg#readme",
     "peerDependencies": {
         "@angular/common": ">=15.0.0 <19.0.0",
         "@angular/core": ">=15.0.0 <19.0.0"

@@ -6,10 +6,6 @@ import { ErrorMessageMappings, NgxErrorMsgService } from './ngx-error-msg.servic
 
 @Injectable()
 export class NgxErrorMsgDirService extends NgxErrorMsgService {
-    get errorMsgMappings() {
-        return this.errorMsgMappings$.value;
-    }
-
     private readonly injectedConfig = inject(NGX_ERROR_MSG_CONFIG);
 
     private readonly errorMsgMappings$ = new BehaviorSubject<ErrorMessageMappings>({});
@@ -17,6 +13,10 @@ export class NgxErrorMsgDirService extends NgxErrorMsgService {
     private readonly overriddenConfig$ = new BehaviorSubject<Partial<NgxErrorMsgConfig>>({});
 
     protected override config = { ...this.injectedConfig, ...this.overriddenConfig$.value };
+
+    protected override get errorMsgMappings() {
+        return this.errorMsgMappings$.value;
+    }
 
     readonly errorMessage$ = combineLatest({
         config: this.overriddenConfig$,

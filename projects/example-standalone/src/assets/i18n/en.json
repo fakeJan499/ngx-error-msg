@@ -1,0 +1,6 @@
+{
+    "ERRORS": {
+        "REQUIRED": "This field is required.",
+        "MIN_LENGTH": "This field must be at least {{minLength}} characters long."
+    }
+}

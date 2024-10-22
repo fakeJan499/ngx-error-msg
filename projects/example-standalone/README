@@ -1,0 +1,9 @@
+# NgxErrorMsg Example - Standalone Components
+
+This is a showcase of using **ngx-error-msg** library within standalone application.
+
+## Run application
+
+1. Install all dependencies: `npm i`.
+2. Build **ngx-error-msg** package locally: `npx ng build ngx-error-msg`.
+3. Serve the application: `npx ng serve example-standalone`.

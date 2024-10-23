@@ -190,3 +190,24 @@ export class AppComponent {
     };
 }
 ```
+
+### Using context
+
+Context is designed to pass any additional data that is not part of the error object to error mapping functions.
+
+Context may be passed directly to the directive or be provided using the `provideNgxErrorMsgContext` function.
+
+```typescript
+@Injectable()
+export class Mapper extends NgxErrorMsgService {
+  protected override readonly errorMsgMappings = {
+    required: (error, ctx) => `${ctx?.fieldName || 'This field'} is required.`,
+  };
+}
+```
+
+```html
+<span *ngxErrorMsg="emailControl.errors; ctx: {fieldName: 'Email'}; let message">
+    {{ message }} 
+</span>
+```

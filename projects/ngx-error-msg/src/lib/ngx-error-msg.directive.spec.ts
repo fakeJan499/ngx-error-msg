@@ -4,6 +4,7 @@ import { ValidationErrors } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Observable, of } from 'rxjs';
 import { defaultConfig, NgxErrorMsgConfig } from './config';
+import { NgxErrorMsgContext } from './context';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
 import { NgxErrorMsgDirective } from './ngx-error-msg.directive';
 import { ErrorMessageMappings } from './ngx-error-msg.service';
@@ -11,7 +12,7 @@ import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
 @Component({
     template: `
-        <div *ngxErrorMsg="errors; mappings: errorMapping; config: config; let message">
+        <div *ngxErrorMsg="errors; mappings: errorMapping; config: config; ctx: ctx; let message">
             {{ message }}
         </div>
     `,
@@ -22,6 +23,7 @@ class HostComponent {
     errors: ValidationErrors | null = null;
     errorMapping: ErrorMessageMappings = {};
     config: Partial<NgxErrorMsgConfig> | null = null;
+    ctx: NgxErrorMsgContext;
 }
 
 @Injectable()
@@ -29,6 +31,7 @@ class MockNgxErrorMsgDirService extends NgxErrorMsgDirService {
     override setErrors = jasmine.createSpy('setErrors');
     override setErrorMsgMappings = jasmine.createSpy('setErrorMsgMappings');
     override setConfig = jasmine.createSpy('setConfig');
+    override setContext = jasmine.createSpy('setContext');
     override errorMessage$: Observable<string | null> = of(null);
 }
 
@@ -96,6 +99,15 @@ describe(`NgxErrorMsgDirective`, () => {
         fixture.detectChanges();
 
         expect(directiveService.setConfig).toHaveBeenCalledWith({});
+    });
+
+    it(`should set context when input is set`, () => {
+        const context: NgxErrorMsgContext = 'myContext';
+
+        fixture.componentInstance.ctx = context;
+        fixture.detectChanges();
+
+        expect(directiveService.setContext).toHaveBeenCalledWith(context);
     });
 
     it(`should display message`, () => {

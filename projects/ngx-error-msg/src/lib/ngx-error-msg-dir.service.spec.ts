@@ -62,5 +62,18 @@ describe(`NgxErrorMsgDirService`, () => {
                 done();
             });
         });
+
+        it(`should use context to determine error message`, done => {
+            service.setErrorMsgMappings({
+                myError: (_, ctx) => `My error message ${ctx}`,
+            });
+            service.setErrors({ myError: true });
+            service.setContext('use ctx to determine the result');
+
+            service.errorMessage$.subscribe(message => {
+                expect(message).toEqual('My error message use ctx to determine the result');
+                done();
+            });
+        });
     });
 });

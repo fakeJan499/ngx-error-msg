@@ -10,6 +10,7 @@ import {
 import { ValidationErrors } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { NgxErrorMsgConfig } from './config';
+import { NgxErrorMsgContext } from './context';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
 import { ErrorMessageMappings } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
@@ -54,6 +55,13 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
      */
     @Input('ngxErrorMsgConfig') set config(value: Partial<NgxErrorMsgConfig> | null) {
         this.mapper.setConfig(value ?? {});
+    }
+
+    /**
+     * Context value used as a parameter for error message mappers. This value overrides the provided context.
+     */
+    @Input('ngxErrorMsgCtx') set ctx(value: NgxErrorMsgContext) {
+        this.mapper.setContext(value);
     }
 
     protected readonly errorMessage$ = this.mapper.errorMessage$;

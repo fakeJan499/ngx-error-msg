@@ -2,8 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { combineLatest, map, Observable, of } from 'rxjs';
 import { NGX_ERROR_MSG_CONFIG } from './config';
+import { NGX_ERROR_MSG_CONTEXT, NgxErrorMsgContext } from './context';
 
-export type ErrorMessageMapperFn = (error: any) => Observable<string> | string;
+export type ErrorMessageMapperFn = (
+    error: any,
+    ctx: NgxErrorMsgContext,
+) => Observable<string> | string;
 export type StaticErrorMessage = string;
 export type ErrorMessageMapper = ErrorMessageMapperFn | StaticErrorMessage;
 export type ErrorMessageMappings = Record<string, ErrorMessageMapper>;
@@ -19,6 +23,7 @@ export abstract class NgxErrorMsgService {
         optional: true,
     });
     protected readonly config = inject(NGX_ERROR_MSG_CONFIG);
+    protected readonly ctx = inject(NGX_ERROR_MSG_CONTEXT, { optional: true });
 
     /**
      * A record of error keys and their corresponding error message mappers.
@@ -60,7 +65,7 @@ export abstract class NgxErrorMsgService {
         );
 
         return errorsMapEntries.map(([key, errorMapping]) =>
-            this.toErrorMessageObservable(errorMapping, errors[key]),
+            this.toErrorMessageObservable(errorMapping, errors[key], this.ctx),
         );
     }
 
@@ -90,8 +95,12 @@ export abstract class NgxErrorMsgService {
         };
     }
 
-    private toErrorMessageObservable(mapping: ErrorMessageMapper, error: any): Observable<string> {
-        const resolvedMessage = typeof mapping === 'string' ? mapping : mapping(error);
+    private toErrorMessageObservable(
+        mapping: ErrorMessageMapper,
+        error: any,
+        ctx: NgxErrorMsgContext,
+    ): Observable<string> {
+        const resolvedMessage = typeof mapping === 'string' ? mapping : mapping(error, ctx);
 
         return typeof resolvedMessage === 'string' ? of(resolvedMessage) : resolvedMessage;
     }

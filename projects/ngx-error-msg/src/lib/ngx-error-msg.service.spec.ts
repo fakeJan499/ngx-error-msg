@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { map, timer } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { NgxErrorMsgConfig } from './config';
+import { NgxErrorMsgContext, provideNgxErrorMsgContext } from './context';
 import { NgxErrorMsgService } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
@@ -11,6 +12,8 @@ class PrimaryMapper extends NgxErrorMsgService {
     protected override readonly errorMsgMappings = {
         required: 'This field is required.',
         override: () => 'This is an overridden error.',
+        mapperUsingContext: (_: any, ctx: NgxErrorMsgContext) =>
+            `This is a message using context: ${ctx.name}`,
         lastPrimaryError: () => 'This is the last primary error.',
     };
 }
@@ -34,10 +37,16 @@ class TestComponent {
     readonly nestedMapper = inject(NgxErrorMsgService);
 }
 
-const getService = (config?: Partial<NgxErrorMsgConfig>): NgxErrorMsgService => {
+const getService = (
+    config?: Partial<NgxErrorMsgConfig>,
+    ctx?: NgxErrorMsgContext,
+): NgxErrorMsgService => {
     TestBed.configureTestingModule({
         imports: [TestComponent],
-        providers: [provideNgxErrorMsg(PrimaryMapper, config)],
+        providers: [
+            provideNgxErrorMsg(PrimaryMapper, config),
+            ctx ? provideNgxErrorMsgContext(ctx) : [],
+        ],
     });
 
     TestBed.overrideComponent(TestComponent, {
@@ -153,5 +162,16 @@ describe('NgxErrorMsgService', () => {
                 );
                 done();
             });
+    });
+
+    it('should pass context to error message mapper', done => {
+        const config = undefined;
+        const context: NgxErrorMsgContext = { name: 'some contextual value' };
+        const service = getService(config, context);
+
+        service.toErrorMessage({ mapperUsingContext: true })?.subscribe(message => {
+            expect(message).toBe('This is a message using context: some contextual value');
+            done();
+        });
     });
 });

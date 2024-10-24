@@ -1,24 +1,23 @@
-import { Component, inject, Injectable } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgxErrorMsgDirective, NgxErrorMsgService, provideNgxErrorMsg } from 'ngx-error-msg';
+import { createNgxErrorMsgMapper, NgxErrorMsgDirective, provideNgxErrorMsg } from 'ngx-error-msg';
 import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
-
-@Injectable()
-class Mapper extends NgxErrorMsgService {
-    protected override errorMsgMappings = {
-        required: 'This field is required.',
-        minlength: (error: any) => `Minimum length is ${error.requiredLength}.`,
-        pattern: 'Value not matching the pattern.',
-    };
-}
 
 @Component({
     selector: 'app-overridden-config',
     standalone: true,
     imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, NgxErrorMsgDirective],
-    providers: [provideNgxErrorMsg(Mapper)],
+    providers: [
+        provideNgxErrorMsg(
+            createNgxErrorMsgMapper({
+                required: 'This field is required.',
+                minlength: (error: any) => `Minimum length is ${error.requiredLength}.`,
+                pattern: 'Value not matching the pattern.',
+            }),
+        ),
+    ],
     template: `
         <div>
             <mat-form-field appearance="fill">

@@ -211,3 +211,38 @@ export class Mapper extends NgxErrorMsgService {
     {{ message }} 
 </span>
 ```
+
+### Simplified mapper creation with `createNgxErrorMsgMapper`
+
+The `createNgxErrorMsgMapper` function creates an injectable class from a mappings object or a factory function that returns a mappings object.
+
+```typescript
+provideNgxErrorMsg(
+    createNgxErrorMsgMapper({
+        required: (error, ctx) => `${ctx?.fieldName || 'This field'} is required.`,
+        pattern: 'This field is invalid.'
+    })
+)
+```
+
+The factory function is executed in an injection context making it possible to inject other services e.g. translation service.
+
+```typescript
+provideNgxErrorMsg(
+    createNgxErrorMsgMapper(() => {
+        const translate = inject(TranslateService);
+
+        return {
+            required: () => translate.get('REQUIRED'),
+        }
+    })
+)
+```
+
+The return value of `createNgxErrorMsgMapper` is a regular class function that can be assigned to a variable, extended, etc.
+
+```typescript
+const Mapper = createNgxErrorMsgMapper({});
+
+class MyClass extends Mapper {}
+```

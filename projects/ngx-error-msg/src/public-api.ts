@@ -3,6 +3,7 @@
  */
 
 export { NgxErrorMsgContext, provideNgxErrorMsgContext } from './lib/context';
+export * from './lib/create-ngx-error-msg-mapper';
 export * from './lib/ngx-error-msg.directive';
 export * from './lib/ngx-error-msg.module';
 export * from './lib/ngx-error-msg.service';

@@ -121,12 +121,12 @@ _NgxErrorMsg_ library supports mappings to Observable making it possible to use 
 ```typescript
 @Injectable()
 export class BaseErrorMsgMapperService extends NgxErrorMsgService {
-  translationService = inject(TranslateService); // Or use any other i18n library.
+  translate = inject(TranslateService); // Or use any other i18n library.
 
   protected override readonly errorMsgMappings = {
-    required: () => translate.get('ERRORS.REQUIRED'),
-    minlength: (error) => translate.get('ERRORS.MIN_LENGTH', {value: error.requiredLength}),
-    maxlength: (error) => translate.get('ERRORS.MAX_LENGTH', {value: error.requiredLength}),
+    required: () => this.translate.get('ERRORS.REQUIRED'),
+    minlength: (error) => this.translate.get('ERRORS.MIN_LENGTH', {value: error.requiredLength}),
+    maxlength: (error) => this.translate.get('ERRORS.MAX_LENGTH', {value: error.requiredLength}),
   };
 }
 ```

@@ -2,6 +2,8 @@
 
 The error message mapping library for Angular.
 
+[Live Demo](https://stackblitz.com/edit/ngx-error-msg-example)
+
 ## Features
 
 - Dynamic directive that display error message.

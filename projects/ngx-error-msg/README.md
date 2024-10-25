@@ -6,10 +6,11 @@ The error message mapping library for Angular.
 
 ## Features
 
-- Dynamic directive that display error message.
-- Support for use with reactive and template driven forms.
-- Support for use with i18n libraries.
-- Support for standalone components and Angular modules.
+✅ Dynamic display of error message  
+✅ Reactive and template driven forms support  
+✅ I18n libraries support  
+✅ SSR support  
+✅ Standalone support
 
 ## Dependencies
 

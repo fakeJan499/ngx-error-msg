@@ -1,5 +1,11 @@
 # NgxErrorMsg
 
+![pipeline status](https://github.com/fakeJan499/ngx-error-msg/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fakeJan499_ngx-error-msg&metric=coverage)
+![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fakeJan499_ngx-error-msg&metric=reliability_rating)
+![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fakeJan499_ngx-error-msg&metric=security_rating)
+![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=fakeJan499_ngx-error-msg&metric=vulnerabilities)
+
 The error message mapping library for Angular.
 
 ## Features

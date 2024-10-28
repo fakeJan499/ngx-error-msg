@@ -5,6 +5,7 @@
         "ci:build": "ng build ngx-error-msg && ng build example-standalone",
         "ci:lint": "ng lint ngx-error-msg && ng lint example-standalone && prettier --check .",
         "ci:test": "ng test --browsers ChromeHeadless --watch false",
+        "ci:test:coverage": "ng test --browsers ChromeHeadless --watch false --code-coverage",
         "prepare": "husky",
         "pre-commit": "lint-staged"
     },

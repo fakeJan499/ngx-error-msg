@@ -140,6 +140,18 @@ export class BaseErrorMsgMapperService extends NgxErrorMsgService {
 }
 ```
 
+### Messages array
+
+The `*ngxErrorMsg` directive expose `messages` array which may be used when using a concatenated message is not sufficient e.g. when each message needs to be displayed in a separate line. Message items may contain additional information beyond the message itself, so they are exposed as objects.
+
+```html
+<div *ngxErrorMsg="control.errors; messages as messages">
+    @for (messageItem of messages; track messageItem.error) {
+        {{messageItem.message}}
+    }
+</div>
+```
+
 ### Overriding messages and config
 
 The error message mapping priority is based on two factors:

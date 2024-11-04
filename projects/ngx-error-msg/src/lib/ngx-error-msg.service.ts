@@ -12,6 +12,8 @@ export type StaticErrorMessage = string;
 export type ErrorMessageMapper = ErrorMessageMapperFn | StaticErrorMessage;
 export type ErrorMessageMappings = Record<string, ErrorMessageMapper>;
 
+export type MappedMessage = { error: string; message: string };
+
 /**
  * A base service that maps form errors to error messages.
  * It can be extended to provide custom error messages.
@@ -42,30 +44,59 @@ export abstract class NgxErrorMsgService {
      * @returns An observable of the error message or null if no errors or there's no mapping for given errors.
      */
     toErrorMessage(errors: ValidationErrors | null): Observable<string> | null {
+        const messages$ = this.toErrorMessages(errors);
+
+        if (!messages$) {
+            return null;
+        }
+
+        return messages$.pipe(map(this.concatMessages));
+    }
+
+    /**
+     * Maps the given form errors to an array of error messages.
+     * Each error message is mapped based on the error key and its corresponding error message mapper.
+     *
+     * Priority of errors mapping is based on the following rules:
+     * 1. Error messages mapped by this service are prioritized over the parent service.
+     * 2. The order of error messages is based on the order of the error keys in the form errors object.
+     *
+     * @param errors The form errors to map.
+     *
+     * @returns An observable of the error messages or null if no errors or there's no mapping for given errors.
+     */
+    toErrorMessages(errors: ValidationErrors | null): Observable<MappedMessage[]> | null {
         if (!errors) {
             return null;
         }
 
-        return this.getErrorMessage(errors);
-    }
-
-    private getErrorMessage(errors: ValidationErrors): Observable<string> | null {
         const messageObservables = this.getMappedErrorMessageObservables(errors);
 
         if (messageObservables.length === 0) {
             return null;
         }
 
-        return combineLatest(messageObservables).pipe(map(messages => messages.join(' ')));
+        return combineLatest(messageObservables);
     }
 
-    private getMappedErrorMessageObservables(errors: ValidationErrors): Observable<string>[] {
+    /**
+     * Concatenates the error messages into a single string.
+     */
+    protected concatMessages(messages: MappedMessage[]): string {
+        return messages.map(x => x.message).join(' ');
+    }
+
+    private getMappedErrorMessageObservables(
+        errors: ValidationErrors,
+    ): Observable<MappedMessage>[] {
         const errorsMapEntries = Object.entries(
             this.getErrorMessageMappingMap(errors, this.config.errorsLimit),
         );
 
         return errorsMapEntries.map(([key, errorMapping]) =>
-            this.toErrorMessageObservable(errorMapping, errors[key], this.ctx),
+            this.toErrorMessageObservable(errorMapping, errors[key], this.ctx).pipe(
+                map(message => ({ error: key, message })),
+            ),
         );
     }
 

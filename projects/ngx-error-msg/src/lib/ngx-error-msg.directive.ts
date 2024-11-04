@@ -12,11 +12,12 @@ import { Subscription } from 'rxjs';
 import { NgxErrorMsgConfig } from './config';
 import { NgxErrorMsgContext } from './context';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
-import { ErrorMessageMappings } from './ngx-error-msg.service';
+import { ErrorMessageMappings, MappedMessage } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
 interface Context {
     $implicit: string | null;
+    messages: MappedMessage[] | null;
 }
 
 @Directive({
@@ -64,8 +65,6 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
         this.mapper.setContext(value);
     }
 
-    protected readonly errorMessage$ = this.mapper.errorMessage$;
-
     private messageSubscription: Subscription | null = null;
 
     static ngTemplateContextGuard(_: NgxErrorMsgDirective, ctx: any): ctx is Context {
@@ -73,10 +72,11 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.messageSubscription = this.mapper.errorMessage$.subscribe(message => {
+        this.messageSubscription = this.mapper.vm$.subscribe(({ message, messages }) => {
             this.viewContainerRef.clear();
             this.viewContainerRef.createEmbeddedView<Context>(this.templateRef, {
                 $implicit: message,
+                messages: messages,
             });
         });
     }

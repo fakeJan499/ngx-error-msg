@@ -2,7 +2,7 @@ import { Component, Injectable } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidationErrors } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { defaultConfig, NgxErrorMsgConfig } from './config';
 import { NgxErrorMsgContext } from './context';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
@@ -32,7 +32,7 @@ class MockNgxErrorMsgDirService extends NgxErrorMsgDirService {
     override setErrorMsgMappings = jasmine.createSpy('setErrorMsgMappings');
     override setConfig = jasmine.createSpy('setConfig');
     override setContext = jasmine.createSpy('setContext');
-    override errorMessage$: Observable<string | null> = of(null);
+    override vm$: NgxErrorMsgDirService['vm$'] = of({ message: null, messages: null });
 }
 
 describe(`NgxErrorMsgDirective`, () => {
@@ -112,7 +112,7 @@ describe(`NgxErrorMsgDirective`, () => {
 
     it(`should display message`, () => {
         const errorMessage = 'Error';
-        directiveService.errorMessage$ = of(errorMessage);
+        directiveService.vm$ = of({ message: errorMessage, messages: null });
 
         fixture.detectChanges();
         const messageElement = fixture.debugElement.query(By.css('div'));
@@ -121,7 +121,7 @@ describe(`NgxErrorMsgDirective`, () => {
 
     it(`should display empty string if error message is null`, () => {
         const errorMessage = null;
-        directiveService.errorMessage$ = of(errorMessage);
+        directiveService.vm$ = of({ message: errorMessage, messages: null });
 
         fixture.detectChanges();
         const messageElement = fixture.debugElement.query(By.css('div'));

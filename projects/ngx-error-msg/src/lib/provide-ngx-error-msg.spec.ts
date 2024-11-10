@@ -1,6 +1,7 @@
 import { Component, inject, Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { defaultConfig, NGX_ERROR_MSG_CONFIG, NgxErrorMsgConfig } from './config';
+import { defaultConfig, NGX_ERROR_MSG_CONFIG } from './config';
+import { mockConfig } from './internal/testing/mock-config';
 import { NgxErrorMsgService } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
@@ -66,7 +67,7 @@ describe(`provideNgxErrorMsg`, () => {
     });
 
     it(`should provide config`, () => {
-        const expectedConfig: NgxErrorMsgConfig = { errorsLimit: 5 };
+        const expectedConfig = mockConfig({ errorsLimit: 5 });
         TestBed.configureTestingModule({
             providers: [provideNgxErrorMsg(TestService, expectedConfig)],
         });
@@ -77,7 +78,7 @@ describe(`provideNgxErrorMsg`, () => {
     });
 
     it(`should provide config from parent injector if no config used`, () => {
-        const rootConfig: NgxErrorMsgConfig = { errorsLimit: -123456789 };
+        const rootConfig = mockConfig({ errorsLimit: -123456789 });
         TestBed.configureTestingModule({
             providers: [provideNgxErrorMsg(TestService, rootConfig)],
             imports: [TestComponent],

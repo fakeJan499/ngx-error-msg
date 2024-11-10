@@ -1,6 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, of, switchMap } from 'rxjs';
+import {
+    BehaviorSubject,
+    combineLatest,
+    distinctUntilChanged,
+    map,
+    of,
+    shareReplay,
+    switchMap,
+} from 'rxjs';
 import { NGX_ERROR_MSG_CONFIG, NgxErrorMsgConfig } from './config';
 import { NGX_ERROR_MSG_CONTEXT, NgxErrorMsgContext } from './context';
 import { ErrorMessageMappings, NgxErrorMsgService } from './ngx-error-msg.service';
@@ -22,15 +30,26 @@ export class NgxErrorMsgDirService extends NgxErrorMsgService {
         return this.errorMsgMappings$.value;
     }
 
-    readonly errorMessage$ = combineLatest({
+    private readonly errorMessages$ = combineLatest({
         config: this.overriddenConfig$,
         errors: this.errors$,
         errorsMap: this.errorMsgMappings$,
         ctx: this.ctx$,
     }).pipe(
-        switchMap(({ errors }) => this.toErrorMessage(errors) ?? of(null)),
+        switchMap(({ errors }) => this.toErrorMessages(errors) ?? of(null)),
+        distinctUntilChanged(),
+        shareReplay({ bufferSize: 1, refCount: true }),
+    );
+
+    private readonly errorMessage$ = this.errorMessages$.pipe(
+        map(messages => (messages ? this.concatMessages(messages) : null)),
         distinctUntilChanged(),
     );
+
+    readonly vm$ = combineLatest({
+        message: this.errorMessage$,
+        messages: this.errorMessages$,
+    });
 
     setConfig(config: Partial<NgxErrorMsgConfig>) {
         this.config = { ...this.config, ...config };

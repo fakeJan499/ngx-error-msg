@@ -13,35 +13,39 @@ describe(`NgxErrorMsgDirService`, () => {
         service = TestBed.inject(NgxErrorMsgDirService);
     });
 
-    describe(`errorMessage$`, () => {
+    describe(`vm$`, () => {
         it(`should emit mapped errors using given conversion record`, done => {
             const expectedError = 'My error message';
+            const expectedErrors = [{ error: 'myError', message: expectedError }];
             service.setErrorMsgMappings({
                 myError: expectedError,
             });
             service.setErrors({ myError: true });
 
-            service.errorMessage$.subscribe(message => {
+            service.vm$.subscribe(({ message, messages }) => {
                 expect(message).toEqual(expectedError);
+                expect(messages).toEqual(expectedErrors);
                 done();
             });
         });
 
-        it(`should emit null if error cannot be mapped`, done => {
+        it(`should emit nulls if error cannot be mapped`, done => {
             service.setErrorMsgMappings({});
             service.setErrors({ myError: true });
 
-            service.errorMessage$.subscribe(message => {
+            service.vm$.subscribe(({ message, messages }) => {
                 expect(message).toBeNull();
+                expect(messages).toBeNull();
                 done();
             });
         });
 
-        it(`should emit null if there's no error to be mapped`, done => {
+        it(`should emit nulls if there's no error to be mapped`, done => {
             service.setErrors(null);
 
-            service.errorMessage$.subscribe(message => {
+            service.vm$.subscribe(({ message, messages }) => {
                 expect(message).toBeNull();
+                expect(messages).toBeNull();
                 done();
             });
         });
@@ -50,6 +54,10 @@ describe(`NgxErrorMsgDirService`, () => {
             const myErrorMessage = 'My error message';
             const anotherErrorMessage = 'Another error message';
             const expectedError = `${myErrorMessage} ${anotherErrorMessage}`;
+            const expectedErrors = [
+                { error: 'myError', message: myErrorMessage },
+                { error: 'anotherError', message: anotherErrorMessage },
+            ];
             service.setErrorMsgMappings({
                 myError: myErrorMessage,
                 anotherError: anotherErrorMessage,
@@ -57,21 +65,27 @@ describe(`NgxErrorMsgDirService`, () => {
             service.setErrors({ myError: true, anotherError: true });
             service.setConfig({ errorsLimit: 2 });
 
-            service.errorMessage$.subscribe(message => {
+            service.vm$.subscribe(({ message, messages }) => {
                 expect(message).toEqual(expectedError);
+                expect(messages).toEqual(expectedErrors);
                 done();
             });
         });
 
-        it(`should use context to determine error message`, done => {
+        it(`should use context to determine error messages`, done => {
+            const errorPrefix = 'My error message';
+            const errorSuffixFromCtx = 'use ctx to determine the result';
+            const expectedError = `${errorPrefix} ${errorSuffixFromCtx}`;
+            const expectedErrors = [{ error: 'myError', message: expectedError }];
             service.setErrorMsgMappings({
-                myError: (_, ctx) => `My error message ${ctx}`,
+                myError: (_, ctx) => `${errorPrefix} ${ctx}`,
             });
             service.setErrors({ myError: true });
-            service.setContext('use ctx to determine the result');
+            service.setContext(errorSuffixFromCtx);
 
-            service.errorMessage$.subscribe(message => {
-                expect(message).toEqual('My error message use ctx to determine the result');
+            service.vm$.subscribe(({ message, messages }) => {
+                expect(message).toEqual(expectedError);
+                expect(messages).toEqual(expectedErrors);
                 done();
             });
         });

@@ -50,7 +50,7 @@ export abstract class NgxErrorMsgService {
             return null;
         }
 
-        return messages$.pipe(map(this.concatMessages));
+        return messages$.pipe(map(messages => this.concatMessages(messages)));
     }
 
     /**
@@ -81,9 +81,11 @@ export abstract class NgxErrorMsgService {
 
     /**
      * Concatenates the error messages into a single string.
+     *
+     * It should not be overridden.
      */
     protected concatMessages(messages: MappedMessage[]): string {
-        return messages.map(x => x.message).join(' ');
+        return messages.map(x => x.message).join(this.config.separator);
     }
 
     private getMappedErrorMessageObservables(

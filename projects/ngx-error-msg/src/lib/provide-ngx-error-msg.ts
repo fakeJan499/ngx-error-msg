@@ -25,7 +25,6 @@ const hasOwnProperty = (obj: object, prop: string): boolean =>
  *
  * @param mapper - The function that provides form error mapping.
  * @param config - Optional configuration for the error mapper.
- * @param {number} [config.errorsLimit=1] - The limit of errors to map. Defaults to 1.
  */
 export const provideNgxErrorMsg = (
     mapper: FormErrorMapperProvider,

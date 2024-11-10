@@ -4,6 +4,7 @@ import { map, timer } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { NgxErrorMsgConfig } from './config';
 import { NgxErrorMsgContext, provideNgxErrorMsgContext } from './context';
+import { mockConfig } from './internal/testing/mock-config';
 import { NgxErrorMsgService } from './ngx-error-msg.service';
 import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
@@ -172,6 +173,16 @@ describe('NgxErrorMsgService', () => {
 
             service.toErrorMessage({ mapperUsingContext: true })?.subscribe(message => {
                 expect(message).toBe('This is a message using context: some contextual value');
+                done();
+            });
+        });
+
+        it('should concat messages with separator', done => {
+            const config = mockConfig({ separator: ' | ', errorsLimit: -1 });
+            const service = getService(config);
+
+            service.toErrorMessage({ required: true, nested: true })?.subscribe(message => {
+                expect(message).toBe('This is a nested error. | This field is required.');
                 done();
             });
         });

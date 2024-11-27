@@ -9,26 +9,23 @@ import {
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { NgxErrorMsgConfig } from './config';
-import { NgxErrorMsgContext } from './context';
+import { NgxErrorMsgConfig } from '../data/config';
+import { NgxErrorMsgContext } from '../data/context';
+import { ErrorMessageMappings } from '../data/mappings';
+import { MappedMessage } from '../mappers/types';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
-import { ErrorMessageMappings, MappedMessage } from './ngx-error-msg.service';
-import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
 interface Context {
-    $implicit: string | null;
-    messages: MappedMessage[] | null;
+    $implicit: {
+        message: string;
+        messages: MappedMessage[];
+    };
 }
 
 @Directive({
     selector: '[ngxErrorMsg]',
     standalone: true,
-    providers: [
-        NgxErrorMsgDirService,
-        provideNgxErrorMsg({
-            useExisting: NgxErrorMsgDirService,
-        }),
-    ],
+    providers: [NgxErrorMsgDirService],
 })
 export class NgxErrorMsgDirective implements OnInit, OnDestroy {
     private readonly mapper = inject(NgxErrorMsgDirService);
@@ -36,7 +33,7 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
     private readonly viewContainerRef = inject(ViewContainerRef);
 
     /**
-     * Form errors to be mapped to error message.
+     * Validation errors to be mapped to error message.
      */
     @Input('ngxErrorMsg') set errors(errors: ValidationErrors | null) {
         this.mapper.setErrors(errors);
@@ -45,21 +42,23 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
     /**
      * A record of error keys and their corresponding error message mappers.
      *
-     * This is used as primary mapping, before using mappers defined in services.
+     * This is used as primary mapping, before using provided mappers.
      */
     @Input('ngxErrorMsgMappings') set errorsMapping(value: ErrorMessageMappings) {
-        this.mapper.setErrorMsgMappings(value);
+        this.mapper.setMappings(value);
     }
 
     /**
-     * Configuration for error message. This will override the provided configuration.
+     * Configuration for error message.
+     *
+     * Properties defiled here are prioritized over the provided configuration.
      */
     @Input('ngxErrorMsgConfig') set config(value: Partial<NgxErrorMsgConfig> | null) {
         this.mapper.setConfig(value ?? {});
     }
 
     /**
-     * Context value used as a parameter for error message mappers. This value overrides the provided context.
+     * Context value used as a parameter for error message mappers.
      */
     @Input('ngxErrorMsgCtx') set ctx(value: NgxErrorMsgContext) {
         this.mapper.setContext(value);
@@ -75,8 +74,7 @@ export class NgxErrorMsgDirective implements OnInit, OnDestroy {
         this.messageSubscription = this.mapper.vm$.subscribe(({ message, messages }) => {
             this.viewContainerRef.clear();
             this.viewContainerRef.createEmbeddedView<Context>(this.templateRef, {
-                $implicit: message,
-                messages: messages,
+                $implicit: { message, messages },
             });
         });
     }

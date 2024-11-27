@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { createNgxErrorMsgMapper, NgxErrorMsgDirective, provideNgxErrorMsg } from 'ngx-error-msg';
+import { NgxErrorMsgDirective, provideNgxErrorMsg, withMappings } from 'ngx-error-msg';
 import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
 
 @Component({
@@ -11,9 +11,9 @@ import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
     imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, NgxErrorMsgDirective],
     providers: [
         provideNgxErrorMsg(
-            createNgxErrorMsgMapper({
+            withMappings({
                 required: 'This field is required.',
-                minlength: (error: any) => `Minimum length is ${error.requiredLength}.`,
+                minlength: error => `Minimum length is ${error.requiredLength}.`,
                 pattern: 'Value not matching the pattern.',
             }),
         ),
@@ -23,8 +23,8 @@ import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
             <mat-form-field appearance="fill">
                 <mat-label>City</mat-label>
                 <input matInput [formControl]="form.controls.city" />
-                <mat-error *ngxErrorMsg="form.controls.city.errors; let message">
-                    {{ message }}
+                <mat-error *ngxErrorMsg="form.controls.city.errors; let mappedErrors">
+                    {{ mappedErrors.message }}
                 </mat-error>
             </mat-form-field>
         </div>
@@ -36,11 +36,11 @@ import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
                 <mat-error
                     *ngxErrorMsg="
                         form.controls.country.errors;
-                        config: { errorsLimit: -1 };
+                        config: { errorsLimit: 1 };
                         mappings: countryErrorMsgMappings;
-                        let message
+                        let mappedErrors
                     ">
-                    {{ message }}
+                    {{ mappedErrors.message }}
                 </mat-error>
             </mat-form-field>
         </div>
@@ -53,9 +53,9 @@ import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
                     *ngxErrorMsg="
                         form.controls.street.errors;
                         mappings: { required: 'Street is required.' };
-                        let message
+                        let mappedErrors
                     ">
-                    {{ message }}
+                    {{ mappedErrors.message }}
                 </mat-error>
             </mat-form-field>
         </div>
@@ -68,9 +68,9 @@ import { ErrorMessageMappings } from 'projects/ngx-error-msg/src/public-api';
                     *ngxErrorMsg="
                         form.controls.zip.errors;
                         mappings: { pattern: 'Use Polish zip code in format xx-xxx.' };
-                        let message
+                        let mappedErrors
                     ">
-                    {{ message }}
+                    {{ mappedErrors.message }}
                 </mat-error>
             </mat-form-field>
         </div>

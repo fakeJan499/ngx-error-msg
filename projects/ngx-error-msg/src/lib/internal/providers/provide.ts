@@ -47,7 +47,8 @@ export const withConfig = (
 
 /**
  * It creates a data provider for the error message mappings.
- * It merges the given mappings with the parent mappings (from parent injector) if they exist.
+ * It merges the given mappings with the parent mappings (from parent injector) if they exist
+ * prioritizing the given mappings over the parent mappings.
  *
  * @param mappings The mappings to provide.
  */

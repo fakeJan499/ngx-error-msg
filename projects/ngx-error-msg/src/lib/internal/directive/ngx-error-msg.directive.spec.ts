@@ -3,17 +3,23 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidationErrors } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
-import { defaultConfig, NgxErrorMsgConfig } from './config';
-import { NgxErrorMsgContext } from './context';
+import { defaultConfig, NgxErrorMsgConfig } from '../data/config';
+import { NgxErrorMsgContext } from '../data/context';
+import { ErrorMessageMappings } from '../data/mappings';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
 import { NgxErrorMsgDirective } from './ngx-error-msg.directive';
-import { ErrorMessageMappings } from './ngx-error-msg.service';
-import { provideNgxErrorMsg } from './provide-ngx-error-msg';
 
 @Component({
     template: `
-        <div *ngxErrorMsg="errors; mappings: errorMapping; config: config; ctx: ctx; let message">
-            {{ message }}
+        <div
+            *ngxErrorMsg="
+                errors;
+                mappings: errorMapping;
+                config: config;
+                ctx: ctx;
+                let mappedErrors
+            ">
+            {{ mappedErrors.message }}
         </div>
     `,
     standalone: true,
@@ -27,12 +33,12 @@ class HostComponent {
 }
 
 @Injectable()
-class MockNgxErrorMsgDirService extends NgxErrorMsgDirService {
-    override setErrors = jasmine.createSpy('setErrors');
-    override setErrorMsgMappings = jasmine.createSpy('setErrorMsgMappings');
-    override setConfig = jasmine.createSpy('setConfig');
-    override setContext = jasmine.createSpy('setContext');
-    override vm$: NgxErrorMsgDirService['vm$'] = of({ message: null, messages: null });
+class MockNgxErrorMsgDirService {
+    setErrors = jasmine.createSpy('setErrors');
+    setMappings = jasmine.createSpy('setMappings ');
+    setConfig = jasmine.createSpy('setConfig');
+    setContext = jasmine.createSpy('setContext');
+    vm$: NgxErrorMsgDirService['vm$'] = of({ message: '', messages: [] });
 }
 
 describe(`NgxErrorMsgDirective`, () => {
@@ -54,7 +60,6 @@ describe(`NgxErrorMsgDirective`, () => {
                     provide: NgxErrorMsgDirService,
                     useExisting: MockNgxErrorMsgDirService,
                 },
-                provideNgxErrorMsg({ useExisting: MockNgxErrorMsgDirService }),
             ],
         });
 
@@ -79,7 +84,7 @@ describe(`NgxErrorMsgDirective`, () => {
         fixture.componentInstance.errorMapping = mapping;
         fixture.detectChanges();
 
-        expect(directiveService.setErrorMsgMappings).toHaveBeenCalledWith(mapping);
+        expect(directiveService.setMappings).toHaveBeenCalledWith(mapping);
     });
 
     it(`should set config when input is set`, () => {
@@ -112,19 +117,10 @@ describe(`NgxErrorMsgDirective`, () => {
 
     it(`should display message`, () => {
         const errorMessage = 'Error';
-        directiveService.vm$ = of({ message: errorMessage, messages: null });
+        directiveService.vm$ = of({ message: errorMessage, messages: [] });
 
         fixture.detectChanges();
         const messageElement = fixture.debugElement.query(By.css('div'));
         expect(messageElement.nativeElement.textContent.trim()).toEqual(errorMessage);
-    });
-
-    it(`should display empty string if error message is null`, () => {
-        const errorMessage = null;
-        directiveService.vm$ = of({ message: errorMessage, messages: null });
-
-        fixture.detectChanges();
-        const messageElement = fixture.debugElement.query(By.css('div'));
-        expect(messageElement.nativeElement.textContent.trim()).toEqual('');
     });
 });

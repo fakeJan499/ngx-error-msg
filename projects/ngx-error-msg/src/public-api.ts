@@ -2,9 +2,7 @@
  * Public API Surface of ngx-error-msg
  */
 
-export { NgxErrorMsgContext, provideNgxErrorMsgContext } from './lib/context';
-export * from './lib/create-ngx-error-msg-mapper';
-export * from './lib/ngx-error-msg.directive';
-export * from './lib/ngx-error-msg.module';
-export * from './lib/ngx-error-msg.service';
-export * from './lib/provide-ngx-error-msg';
+export * from './lib/data';
+export * from './lib/directive';
+export * from './lib/mappers';
+export * from './lib/providers';

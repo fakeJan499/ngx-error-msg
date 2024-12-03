@@ -16,7 +16,8 @@ The error message mapping library for Angular.
 ✅ Reactive and template driven forms support  
 ✅ I18n libraries support  
 ✅ SSR support  
-✅ Standalone support
+✅ Standalone support  
+✅ Zoneless change detection support
 
 ## Dependencies
 

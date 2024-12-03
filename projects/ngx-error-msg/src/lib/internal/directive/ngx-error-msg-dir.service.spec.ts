@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { mergeConfigs, NGX_ERROR_MSG_CONFIG, NgxErrorMsgConfig } from '../data/config';
+import { defaultCtx } from '../data/context';
 import { ErrorMessageMappings, mergeMappings, NGX_ERROR_MSG_MAPPINGS } from '../data/mappings';
 import { ErrorMessageConcatenationService } from '../mappers/error-messages-concatenation.service';
 import { ErrorsToErrorMessagesMapperService } from '../mappers/errors-to-error-messages-mapper.service';
@@ -7,8 +8,6 @@ import { MappedMessage } from '../mappers/types';
 import { getTestScheduler } from '../testing/get-test-scheduler';
 import { mockConfig } from '../testing/mock-config';
 import { NgxErrorMsgDirService } from './ngx-error-msg-dir.service';
-import { mockCtx } from '../testing/mock-ctx';
-import { defaultCtx } from '../data/context';
 
 describe('NgxErrorMsgDirService', () => {
     let service: NgxErrorMsgDirService;

@@ -34,6 +34,7 @@ describe('isNullable', () => {
     });
 
     it('should return false for a function', () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         expect(isNullable(() => {})).toBe(false);
     });
 });

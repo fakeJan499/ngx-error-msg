@@ -14,7 +14,7 @@ describe(`mappingsOrder`, () => {
         const prioritizer = mappingsOrder();
         const comparator = prioritizer(mockErrors(), mappings);
 
-        const result = errorKeys.sort(comparator);
+        const result = [...errorKeys].sort(comparator);
 
         expect(result).toEqual(['a', 'b', 'c']);
     });
@@ -29,7 +29,7 @@ describe(`mappingsOrder`, () => {
         const prioritizer = mappingsOrder({ direction: 'bottom-up' });
         const comparator = prioritizer(mockErrors(), mappings);
 
-        const result = errorKeys.sort(comparator);
+        const result = [...errorKeys].sort(comparator);
 
         expect(result).toEqual(['c', 'b', 'a']);
     });
@@ -66,7 +66,7 @@ describe(`errorsOrder`, () => {
         const prioritizer = errorsOrder();
         const comparator = prioritizer(errors, mappings);
 
-        const result = errorKeys.sort(comparator);
+        const result = [...errorKeys].sort(comparator);
 
         expect(result).toEqual(['b', 'a', 'c']);
     });
@@ -82,7 +82,7 @@ describe(`errorsOrder`, () => {
         const prioritizer = errorsOrder({ direction: 'bottom-up' });
         const comparator = prioritizer(errors, mappings);
 
-        const result = errorKeys.sort(comparator);
+        const result = [...errorKeys].sort(comparator);
 
         expect(result).toEqual(['c', 'a', 'b']);
     });

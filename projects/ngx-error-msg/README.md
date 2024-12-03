@@ -22,7 +22,7 @@ The error message mapping library for Angular.
 
 |Angular |
 |:-------|
-|15 to 18|
+|15 to 19|
 
 ## Installation
 

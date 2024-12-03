@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ValidationErrors } from '@angular/forms';
 import { NgxErrorMsgContext } from '../data/context';
 import { ErrorMessageMappings } from '../data/mappings';
+import { ErrorMessagesPrioritizer } from '../prioritizers/types';
 import { getTestScheduler } from '../testing/get-test-scheduler';
 import { mockConfig } from '../testing/mock-config';
 import { mockCtx } from '../testing/mock-ctx';
@@ -82,7 +83,11 @@ describe('ErrorsToErrorMessagesMapperService', () => {
         });
     });
 
-    it('should prioritize error messages by the order in the errorsMap', done => {
+    it('should prioritize error messages using messages prioritizer', done => {
+        const alphabeticPrioritizer: ErrorMessagesPrioritizer = () => (a, b) => a.localeCompare(b);
+        const config = mockConfig({
+            messagesPrioritizer: alphabeticPrioritizer,
+        });
         const errors = {
             required: true,
             min: true,
@@ -94,11 +99,11 @@ describe('ErrorsToErrorMessagesMapperService', () => {
             max: 'This is a max error.',
         };
 
-        service.toErrorMessages(errors, mappings, mockCtx(), mockConfig()).subscribe(message => {
+        service.toErrorMessages(errors, mappings, mockCtx(), config).subscribe(message => {
             expect(message).toEqual([
+                { error: 'max', message: mappings['max'] },
                 { error: 'min', message: mappings['min'] },
                 { error: 'required', message: mappings['required'] },
-                { error: 'max', message: mappings['max'] },
             ]);
             done();
         });

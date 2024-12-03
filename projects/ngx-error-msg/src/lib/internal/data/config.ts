@@ -1,4 +1,6 @@
 import { InjectionToken } from '@angular/core';
+import { mappingsOrder } from '../prioritizers/prioritizers';
+import { ErrorMessagesPrioritizer } from '../prioritizers/types';
 
 export type NgxErrorMsgConfig = {
     /**
@@ -11,6 +13,11 @@ export type NgxErrorMsgConfig = {
      * @default ' '
      */
     separator: string;
+    /**
+     * The prioritizer to use when multiple error messages are mapped.
+     * @default mappingsOrder()
+     */
+    messagesPrioritizer: ErrorMessagesPrioritizer;
 };
 
 export const NGX_ERROR_MSG_CONFIG = new InjectionToken<Readonly<NgxErrorMsgConfig>>(
@@ -20,6 +27,7 @@ export const NGX_ERROR_MSG_CONFIG = new InjectionToken<Readonly<NgxErrorMsgConfi
 export const defaultConfig: Readonly<NgxErrorMsgConfig> = {
     errorsLimit: -1,
     separator: ' ',
+    messagesPrioritizer: mappingsOrder(),
 };
 
 export const mergeConfigs = (

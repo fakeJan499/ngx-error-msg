@@ -101,3 +101,28 @@ provideNgxErrorMsg(
     }),
 )
 ```
+
+### Error messages prioritization
+
+By default the order of mapped error messages is based on the order in the mappings object (e.g. provided by `withMappings`). This behavior can be overridden by using one of predefined prioritizers or defining a custom one.
+
+``` typescript
+withConfig({
+    messagesPrioritizer: (errors, mappings) => {
+        const errorsOrder = ['required', 'minlength', 'email'];
+
+        return (errA, errB) => {
+            return errorsOrder.indexOf(errA) - errorsOrder.indexOf(errB);
+        };
+    },
+})
+```
+
+> **_NOTE:_**  The `messagesPrioritizer` function **is not** executed in an injection context. To use injected values, a factory configuration provider must be used.
+
+```typescript
+withConfig(() => {
+    const service = inject(MyService); 
+    return {};
+})
+```

@@ -39,7 +39,7 @@ export class ErrorsToErrorMessagesMapperService {
         config: NgxErrorMsgConfig,
     ): Observable<MappedMessage>[] {
         const errorsMapEntries = this.limitEntries(
-            this.getPrioritizedMappingEntries(errors, mappings),
+            this.getPrioritizedMappingEntries(errors, mappings, config),
             config.errorsLimit,
         );
 
@@ -53,10 +53,21 @@ export class ErrorsToErrorMessagesMapperService {
     private getPrioritizedMappingEntries(
         errors: ValidationErrors,
         mappings: ErrorMessageMappings,
+        config: NgxErrorMsgConfig,
     ): MappingEntry[] {
-        // Prioritize errors by the order of the mappings.
         // Errors that are not mapped are skipped.
-        return Object.entries(mappings).filter(([key]) => errors[key]);
+        const mappingEntriesToUse = Object.entries(mappings).filter(([key]) => errors[key]);
+
+        // If there are less than 2 mappings, there is no need to prioritize.
+        if (mappingEntriesToUse.length < 2) {
+            return mappingEntriesToUse;
+        }
+
+        // Avoid additional computations by extracting the comparator function.
+        // It prevents creating the comparator function for each comparison.
+        const comparator = config.messagesPrioritizer(errors, mappings);
+
+        return mappingEntriesToUse.sort(([errorA], [errorB]) => comparator(errorA, errorB));
     }
 
     private limitEntries(entries: MappingEntry[], limit: number): MappingEntry[] {
